@@ -1,0 +1,52 @@
+#include <dht.h>
+
+dht DHT;
+
+int DHT11_PIN = 7;
+int buzzer = 12;
+int led = 11;
+
+#include <LiquidCrystal_I2C.h>
+
+LiquidCrystal_I2C lcd(0x27, 16, 2);
+
+void setup() {
+  Serial.begin(9600);
+  lcd.init();
+  lcd.clear();
+  lcd.backlight();
+  pinMode(buzzer, OUTPUT);
+  pinMode(led, OUTPUT);
+}
+
+void loop() {
+  int chk = DHT.read11(DHT11_PIN);
+  lcd.clear();
+  lcd.setCursor(0, 0);
+  if (DHT.temperature > 30) {
+    lcd.clear();
+    lcd.print("High temperature!");
+    digitalWrite(led, HIGH);
+    tone(buzzer, 1000);
+    delay(1000);
+    noTone(buzzer);
+    delay(1000);
+  } else if (DHT.humidity > 60 ) {
+    lcd.clear();
+    lcd.print("High humidity!");
+    digitalWrite(led, HIGH);
+    tone(buzzer, 1000);
+    delay(1000);
+    noTone(buzzer);
+    delay(1000);
+  } else {
+    lcd.print("Temp:");
+    lcd.setCursor(5, 0);
+    lcd.print(DHT.temperature);
+    lcd.setCursor(0, 1);
+    lcd.print("Humidity:");
+    lcd.setCursor(9, 1);
+    lcd.print(DHT.humidity);
+    delay(1000);
+  }
+}
